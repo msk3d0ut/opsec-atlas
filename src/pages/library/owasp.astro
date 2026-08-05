@@ -1,0 +1,74 @@
+---
+import Base from '../../layouts/Base.astro';
+import CmdList from '../../components/CmdList.tsx';
+import HubIndex from '../../components/HubIndex.astro';
+import { OWASP, OWASP_SEEALSO } from '../../data/owasp.ts';
+import { owaspHandsOn } from '../../lib/data.ts';
+const base = import.meta.env.BASE_URL;
+const rows = OWASP.reduce((n, e) => n + e.blocks.reduce((m, b) => m + b.rows.length, 0), 0);
+---
+<Base title="OWASP Top 10 · OpsecAtlas" here="OWASP Top 10">
+  <div class="tech-head">
+    <span class="label kicker">library</span>
+    <h1>OWASP Top 10</h1>
+    <p class="tech-sub">
+      <span class="label">{OWASP.length} categories</span>
+      <span class="meta-n">2021 · how it works · where to look · working exploitation · the fix</span>
+    </p>
+    <p class="lib-note">
+      The ten categories that define web risk, each a working reference and not a definition. Payloads copy line by line; set <strong>$_ vars</strong> and every command fills with your target and IP.
+    </p>
+  </div>
+
+  <HubIndex label="OWASP categories" items={OWASP.map((e) => ({ id: e.id, label: e.title, badge: e.rank }))} />
+
+  <div class="rail-col">
+  {OWASP.map((e) => (
+    <details class="section owasp" id={e.id} open>
+      <summary class="section-head owasp-head">
+        <span class="owasp-badge">{e.rank}</span>
+        <span class="owasp-headline">
+          <span class="owasp-title">{e.title}</span>
+          <span class={`owasp-risk risk-${e.risk}`}>{e.risk}</span>
+          <span class="owasp-tag">{e.tag}</span>
+        </span>
+        <span class="section-chev" aria-hidden="true">›</span>
+      </summary>
+      <div class="section-body">
+        <div class="lead-note is-explain"><span class="lead-note-label">How it works</span><p class="lead-note-body">{e.what}</p></div>
+        <div class="lead-note"><span class="lead-note-label">Where to look</span><p class="lead-note-body">{e.find}</p></div>
+
+        {e.blocks.map((b) => (
+          <div class="owasp-block">
+            <h3 class="owasp-block-head">{b.title}</h3>
+            {b.blurb && <p class="cmd-note">{b.blurb}</p>}
+            <CmdList commands={b.rows} client:visible />
+          </div>
+        ))}
+
+        <p class="owasp-defense"><span class="label">defense</span> {e.defense}</p>
+        {owaspHandsOn(e.id).length > 0 && (
+          <div class="conn-row owasp-handson">
+            <span class="label conn-label">hands-on</span>
+            <div class="conn-chips">
+              {owaspHandsOn(e.id).map((t) => <a class="chip sm conn-tech" href={`${base}technique/${t.slug}`}>{t.title}</a>)}
+            </div>
+          </div>
+        )}
+        {OWASP_SEEALSO[e.id] && (
+          <div class="conn-row">
+            <span class="label conn-label">see also</span>
+            <div class="conn-chips">
+              {OWASP_SEEALSO[e.id].map((s) => <a class="chip chip-ref sm" href={`${base}${s.to}`}>{s.label}</a>)}
+            </div>
+          </div>
+        )}
+        <p class="cve-refs">
+          <span class="label">refs</span>
+          {e.refs.map((r) => <a class="chip chip-tool" href={r.url} target="_blank" rel="noopener noreferrer">{r.label} ↗</a>)}
+        </p>
+      </div>
+    </details>
+  ))}
+  </div>
+</Base>

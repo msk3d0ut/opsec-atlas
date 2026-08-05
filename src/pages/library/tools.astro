@@ -1,0 +1,48 @@
+---
+import Base from '../../layouts/Base.astro';
+import HubIndex from '../../components/HubIndex.astro';
+import { TOOLS } from '../../data/tools.ts';
+const total = TOOLS.reduce((n, c) => n + c.tools.length, 0);
+---
+<Base title="Tools · OpsecAtlas" here="Tools">
+  <div class="tech-head">
+    <span class="label kicker">library</span>
+    <h1>Tools</h1>
+    <p class="tech-sub">
+      <span class="label">{total} tools</span>
+      <span class="meta-n">what it is · when you reach for it</span>
+    </p>
+    <p class="lib-note">
+      The tools an operator actually reaches for, current and curated. Not a dump of everything on GitHub: the modern recon chain, the AD toolkit, the open-source C2s, and the reporting stack, each with the moment you use it.
+    </p>
+  </div>
+
+  <HubIndex label="Tool categories" items={TOOLS.map((c) => ({ id: c.id, label: c.title, badge: c.tools.length }))} />
+
+  <div class="rail-col">
+  {TOOLS.map((cat) => (
+    <details class="section" id={cat.id} open>
+      <summary class="section-head tool-cat-head">
+        <span class="section-chev" aria-hidden="true">›</span>
+        <span class="tool-cat-title">{cat.title}</span>
+        <span class="owasp-tag">{cat.short}</span>
+      </summary>
+      <div class="section-body">
+        <p class="lib-note tool-cat-blurb">{cat.blurb}</p>
+        <ul class="tool-list">
+          {cat.tools.map((t) => (
+            <li class="tool-item">
+              <div class="tool-head">
+                <a class="tool-name" href={t.url} target="_blank" rel="noopener noreferrer">{t.name} <span aria-hidden="true">↗</span></a>
+                {t.tag && <span class="tool-tag">{t.tag}</span>}
+              </div>
+              <p class="tool-what">{t.what}</p>
+              <p class="tool-when"><span class="label">when</span> {t.when}</p>
+            </li>
+          ))}
+        </ul>
+      </div>
+    </details>
+  ))}
+  </div>
+</Base>

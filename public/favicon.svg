@@ -1,0 +1,11 @@
+<svg viewBox="0 0 32 32" xmlns="http://www.w3.org/2000/svg" role="img" aria-label="OpsecAtlas">
+  <rect width="32" height="32" rx="7" fill="#0e100e"/>
+  <g fill="none" stroke="#b3af9f" stroke-linecap="round" stroke-linejoin="round">
+    <path d="M16 9 6.5 26" stroke-width="2.3"/>
+    <path d="M16 9 25.5 26" stroke-width="2.3"/>
+    <path d="M10.6 18.6 21.4 18.6" stroke-width="2.3"/>
+    <circle cx="6.5" cy="26" r="1.6" stroke-width="1.3"/>
+    <circle cx="25.5" cy="26" r="1.6" stroke-width="1.3"/>
+  </g>
+  <circle cx="16" cy="7" r="2.9" fill="#e8a13a"/>
+</svg>

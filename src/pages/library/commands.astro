@@ -1,0 +1,53 @@
+---
+import Base from '../../layouts/Base.astro';
+import CmdList from '../../components/CmdList.tsx';
+import HubIndex from '../../components/HubIndex.astro';
+import { COMMAND_LIBRARY } from '../../data/commands.ts';
+const base = import.meta.env.BASE_URL;
+const total = COMMAND_LIBRARY.reduce((n, p) => n + p.groups.reduce((m, g) => m + g.commands.length, 0), 0);
+---
+<Base title="Command Library · OpsecAtlas" here="Command Library">
+  <div class="tech-head">
+    <span class="label kicker">library</span>
+    <h1>Command Library</h1>
+    <p class="tech-sub">
+      <span class="label">{total} commands</span>
+      <span class="meta-n">Recon · Linux · Windows · Active Directory · by intent</span>
+    </p>
+    <p class="lib-note">
+      The commands you reach for every engagement, in the order you need them. Set <strong>$_ vars</strong> and they fill with your target and IP.
+    </p>
+  </div>
+
+  <HubIndex label="Command platforms" items={COMMAND_LIBRARY.map((p) => ({ id: p.id, label: p.title, badge: p.groups.reduce((m, g) => m + g.commands.length, 0) }))} />
+
+  <div class="rail-col">
+  {COMMAND_LIBRARY.map((platform) => (
+    <section class="cmd-platform" id={platform.id}>
+      <h2 class="platform-title"><span class="tick">+</span>{platform.title}</h2>
+      {platform.groups.map((g) => (
+        <details class="section" id={g.id} open>
+          <summary class="section-head"><span class="section-chev" aria-hidden="true">›</span>{g.title}<span class="section-count"> / {g.commands.length}</span></summary>
+          <div class="section-body"><CmdList commands={g.commands} client:visible /></div>
+        </details>
+      ))}
+    </section>
+  ))}
+  </div>
+
+  <section class="connected">
+    <span class="label kicker">connected</span>
+    <p class="cmd-note">Grouped by intent; the playbooks put these in order across an engagement, and the Loadout exports your picked set as a runbook.</p>
+    <div class="connected-rows">
+      <div class="conn-row">
+        <span class="label conn-label">related</span>
+        <div class="conn-chips">
+          <a class="chip chip-ref sm" href={`${base}library/payloads`}>Payloads &amp; Shells</a>
+          <a class="chip chip-ref sm" href={`${base}library/methodologies#enumeration-strategy`}>Enumeration Strategy</a>
+          <a class="chip chip-ref sm" href={`${base}library/methodologies#privilege-escalation`}>Privilege Escalation</a>
+          <a class="chip chip-ref sm" href={`${base}library/methodologies#active-directory`}>AD Attack Path</a>
+        </div>
+      </div>
+    </div>
+  </section>
+</Base>

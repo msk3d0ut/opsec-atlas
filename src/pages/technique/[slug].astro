@@ -1,0 +1,131 @@
+---
+import Base from '../../layouts/Base.astro';
+import TechniqueCard from '../../components/TechniqueCard.tsx';
+import { corpus, cleanTitle, domainOf, routesContaining, connectionsFor, playbooksReferencing, owaspForTechnique, KILLCHAIN, killchainIndex, siblingsInDoc, entryRelated, plural } from '../../lib/data.ts';
+
+export function getStaticPaths() {
+  return corpus.techniques.map((t) => ({ params: { slug: t.slug } }));
+}
+
+const { slug } = Astro.params;
+const tech = corpus.techniques.find((t) => t.slug === slug)!;
+const domain = domainOf(tech.docId);
+const inRoutes = routesContaining(tech.slug);
+const conns = connectionsFor(tech.slug);
+const playbooks = playbooksReferencing(tech.slug);
+const owaspCats = owaspForTechnique(tech.slug);
+const kcIndex = killchainIndex(tech.phase);
+const hasConnections = conns.leadsTo.length + conns.reachedFrom.length + conns.tooling.length + playbooks.length + owaspCats.length > 0;
+const base = import.meta.env.BASE_URL;
+const cmdCount = tech.blocks.reduce(
+  (n, b) => n + (b.kind === 'commands' ? b.items.filter((it) => 't' in it).length : 0), 0);
+// A domain entry page (depth 1) is a doc's front door: it holds only a briefing,
+// so give it a real map into the domain instead of a kill-chain pin and dead space.
+const isEntry = tech.depth === 1;
+const siblings = isEntry ? siblingsInDoc(tech.docId, tech.slug) : [];
+const related = isEntry ? entryRelated(tech.docId) : [];
+---
+<Base title={`${cleanTitle(tech.title)} · OpsecAtlas`} here={domain.label}>
+  <div class="tech-head">
+    <a class="label kicker" href={`${base}#${domain.id}`}>{domain.label}</a>
+    <h1>{cleanTitle(tech.title)}</h1>
+    <p class="tech-sub">
+      <span class="label">{isEntry ? 'domain' : 'reference'}</span>
+      {isEntry && <span class="meta-n">{plural(siblings.length, 'section')}</span>}
+      {!isEntry && cmdCount > 0 && <span class="meta-n">{plural(cmdCount, 'command')}</span>}
+      {!isEntry && (tech.tools ?? []).length > 0 && <span class="meta-n">{plural((tech.tools ?? []).length, 'tool')}</span>}
+    </p>
+    {kcIndex >= 0 && !isEntry && (
+      <ol class="killchain" aria-label={`Kill-chain position: ${KILLCHAIN[kcIndex].label}`}>
+        {KILLCHAIN.map((stage, i) => (
+          <li class={`kc-stage ${i === kcIndex ? 'is-here' : i < kcIndex ? 'is-past' : ''}`} aria-current={i === kcIndex ? 'step' : undefined}><span>{stage.label}</span></li>
+        ))}
+      </ol>
+    )}
+    {inRoutes.length > 0 && (
+      <p class="in-routes">
+        <span class="label">reached from</span>
+        {inRoutes.map((r) => (
+          <a class="chip chip-gain sm" href={`${base}route/${r.id}`}>{r.label}</a>
+        ))}
+      </p>
+    )}
+  </div>
+  <TechniqueCard tech={tech} client:load />
+
+  {isEntry && siblings.length > 0 && (
+    <section class="domain-map">
+      <div class="dm-head">
+        <span class="label kicker">in this domain</span>
+        <span class="dm-count">{plural(siblings.length, 'section')}</span>
+      </div>
+      <ol class="entry-list">
+        {siblings.map((s, i) => (
+          <li>
+            <a href={`${base}technique/${s.slug}`}>
+              <span class="entry-n">{String(i + 1).padStart(2, '0')}</span>
+              <span class="entry-title">{s.title}</span>
+              <span class="entry-go" aria-hidden="true">›</span>
+            </a>
+          </li>
+        ))}
+      </ol>
+      {related.length > 0 && (
+        <div class="dm-related">
+          <span class="label conn-label">related</span>
+          <div class="conn-chips">
+            {related.map((r) => <a class="chip chip-ref sm" href={`${base}${r.to}`}>{r.label}</a>)}
+          </div>
+        </div>
+      )}
+    </section>
+  )}
+
+  {hasConnections && (
+    <section class="connected">
+      <span class="label kicker">connected</span>
+      <div class="connected-rows">
+        {conns.leadsTo.length > 0 && (
+          <div class="conn-row">
+            <span class="label conn-label">leads to</span>
+            <div class="conn-chips">
+              {conns.leadsTo.map((c) => <a class="chip sm conn-tech" href={`${base}technique/${c.slug}`}>{c.title}</a>)}
+            </div>
+          </div>
+        )}
+        {conns.reachedFrom.length > 0 && (
+          <div class="conn-row">
+            <span class="label conn-label">follows</span>
+            <div class="conn-chips">
+              {conns.reachedFrom.map((c) => <a class="chip sm conn-tech" href={`${base}technique/${c.slug}`}>{c.title}</a>)}
+            </div>
+          </div>
+        )}
+        {conns.tooling.map((cl) => (
+          <div class="conn-row">
+            <span class="label conn-label">via {cl.tool}</span>
+            <div class="conn-chips">
+              {cl.techniques.map((c) => <a class="chip sm conn-tech" href={`${base}technique/${c.slug}`}>{c.title}</a>)}
+            </div>
+          </div>
+        ))}
+        {playbooks.length > 0 && (
+          <div class="conn-row">
+            <span class="label conn-label">in playbooks</span>
+            <div class="conn-chips">
+              {playbooks.map((p) => <a class="chip chip-ref sm" href={`${base}${p.to}`}>{p.title}</a>)}
+            </div>
+          </div>
+        )}
+        {owaspCats.length > 0 && (
+          <div class="conn-row">
+            <span class="label conn-label">in OWASP</span>
+            <div class="conn-chips">
+              {owaspCats.map((o) => <a class="chip chip-ref sm" href={`${base}library/owasp#${o.id}`}>{o.title}</a>)}
+            </div>
+          </div>
+        )}
+      </div>
+    </section>
+  )}
+</Base>

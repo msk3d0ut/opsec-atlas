@@ -1,0 +1,57 @@
+---
+import Base from '../../layouts/Base.astro';
+import CmdList from '../../components/CmdList.tsx';
+import HubIndex from '../../components/HubIndex.astro';
+import { CVES, CVE_RELATED } from '../../data/cves.ts';
+const base = import.meta.env.BASE_URL;
+---
+<Base title="CVE Vault · OpsecAtlas" here="CVE Vault">
+  <div class="tech-head">
+    <span class="label kicker">library</span>
+    <h1>CVE Vault</h1>
+    <p class="tech-sub">
+      <span class="label">{CVES.length} CVEs</span>
+      <span class="meta-n">what it is · why it mattered · how it is used</span>
+    </p>
+    <p class="lib-note">
+      The vulnerabilities worth knowing cold, with context and working exploitation. Set <strong>$_ vars</strong> and the commands fill with your target.
+    </p>
+  </div>
+
+  <HubIndex label="CVEs" items={CVES.map((c) => ({ id: c.id, label: c.name }))} />
+
+  <div class="rail-col">
+  {CVES.map((cve) => (
+    <details class="section cve" id={cve.id} open>
+      <summary class="section-head cve-head">
+        <span class="section-chev" aria-hidden="true">›</span>
+        <span class="cve-name">{cve.name}</span>
+        <span class="cve-id">{cve.id}</span>
+        <span class={`cve-sev sev-${cve.severity}`}>{cve.severity}</span>
+        <span class="cve-env">{cve.env}</span>
+      </summary>
+      <div class="section-body">
+        <p class="cve-affected"><span class="label">affected</span> {cve.affected}</p>
+        <div class="lead-note is-explain"><span class="lead-note-label">What it is</span><p class="lead-note-body">{cve.what}</p></div>
+        <div class="lead-note"><span class="lead-note-label">Why it mattered</span><p class="lead-note-body">{cve.why}</p></div>
+        <div class="cve-exploit">
+          <span class="label">exploitation</span>
+          <CmdList commands={cve.exploit} client:visible />
+        </div>
+        <p class="cve-refs">
+          <span class="label">refs</span>
+          {cve.refs.map((r) => <a class="chip chip-tool" href={r.url} target="_blank" rel="noopener noreferrer">{r.label} ↗</a>)}
+        </p>
+        {CVE_RELATED[cve.id] && (
+          <div class="conn-row cve-related">
+            <span class="label conn-label">related</span>
+            <div class="conn-chips">
+              {CVE_RELATED[cve.id].map((r) => <a class="chip chip-ref sm" href={`${base}${r.to}`}>{r.label}</a>)}
+            </div>
+          </div>
+        )}
+      </div>
+    </details>
+  ))}
+  </div>
+</Base>

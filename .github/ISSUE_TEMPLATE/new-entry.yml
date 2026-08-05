@@ -1,0 +1,45 @@
+name: Suggest a technique or command
+description: Propose a new technique, command, or correction for the atlas
+title: "[entry]: "
+labels: ["content"]
+body:
+  - type: markdown
+    attributes:
+      value: |
+        Thanks for sharpening the atlas. For anything beyond a small fix, a Markdown pull request is even better and faster to merge. See [CONTRIBUTING.md](../blob/main/CONTRIBUTING.md).
+  - type: dropdown
+    id: domain
+    attributes:
+      label: Domain
+      options:
+        - Active Directory
+        - Linux
+        - Windows
+        - Network
+        - Web
+        - Libraries (payloads / commands / CVEs / tools / wordlists)
+        - Other
+    validations:
+      required: true
+  - type: input
+    id: technique
+    attributes:
+      label: Technique / entry name
+    validations:
+      required: true
+  - type: textarea
+    id: commands
+    attributes:
+      label: Command(s)
+      description: Byte-exact. Use placeholders like <TARGET-IP>, <USER>, <PASS>, <DC-IP>.
+      render: shell
+  - type: input
+    id: source
+    attributes:
+      label: Source / reference
+      description: Where it's documented or was verified (optional, but valued).
+  - type: textarea
+    id: notes
+    attributes:
+      label: Context / notes
+      description: When you reach for this, caveats, OPSEC considerations.

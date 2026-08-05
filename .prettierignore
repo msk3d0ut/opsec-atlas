@@ -1,0 +1,3 @@
+# Never auto-format authored content — the literal line index / lands-on-line
+# search depends on exact bytes and line numbers. Content is edited by hand only.
+src/content/

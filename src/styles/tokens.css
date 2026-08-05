@@ -1,0 +1,83 @@
+/*
+ * OpsecAtlas V3 — design tokens (v0, field manual + navigator's chart).
+ *
+ * Identity direction (spec §7): the product is a MAP of a state-space, so the
+ * visual language is cartographic. Ink ground + warm parchment text (a
+ * deliberate move off the cold AI-default), chart-grid backdrop, hairline
+ * rules, mono coordinate labels, and ONE signal color used like a chart's
+ * "you are here" marker. Fonts are system stacks for now; self-hosted signature
+ * faces are a later task. This is enough to judge the direction, not final.
+ */
+:root {
+  color-scheme: dark;
+
+  /* ---- ink ground + surfaces (warm-neutral, not blue-black) ---- */
+  --ink-900: #0b0c0b; /* deepest ground */
+  --ink-850: #0e100e; /* page background */
+  --ink-800: #121412; /* panel */
+  --ink-750: #171917; /* raised panel */
+  --ink-700: #1d201d; /* hover / active fill */
+
+  /* ---- lines: hairlines + chart grid ---- */
+  --line:      #2a2d2a; /* hairline rules, borders */
+  --line-soft: #202320; /* softer divider */
+  --grid:      rgba(180, 200, 175, 0.035); /* chart-paper grid */
+
+  /* ---- parchment (warm off-white ink), aged for hierarchy ---- */
+  --paper:       #e9e5d8; /* primary text */
+  --paper-dim:   #b3af9f; /* secondary */
+  --paper-faint: #86847a; /* labels, meta */
+
+  /* ---- the one signal color: the "you are here" marker ---- */
+  --signal:      #e8a13a; /* amber: active position, key emphasis, route marker */
+  --signal-dim:  #b17c2c;
+  --signal-wash: rgba(232, 161, 58, 0.10);
+
+  /* neutral chip tones (states) — kept off the single accent */
+  --chip-bg:   #191c19;
+  --chip-line: #313531;
+
+  /* ---- type ---- */
+  --font-sans: 'Söhne', 'Inter', ui-sans-serif, system-ui, -apple-system, 'Segoe UI', sans-serif;
+  --font-mono: ui-monospace, 'Cascadia Code', 'SF Mono', 'Roboto Mono', Menlo, monospace;
+
+  /* modular scale (1.2) */
+  --step--1: 0.833rem;
+  --step-0:  1rem;
+  --step-1:  1.2rem;
+  --step-2:  1.44rem;
+  --step-3:  1.728rem;
+  --step-4:  2.074rem;
+  --step-5:  2.488rem;
+
+  --lh-tight: 1.2;
+  --lh-body:  1.6;
+
+  /* label treatment: map-legend / field-manual section marks */
+  --track-label: 0.12em; /* letter-spacing for uppercase labels */
+
+  /* ---- space (4px base) ---- */
+  --space-1: 0.25rem;
+  --space-2: 0.5rem;
+  --space-3: 0.75rem;
+  --space-4: 1rem;
+  --space-5: 1.5rem;
+  --space-6: 2rem;
+  --space-7: 3rem;
+  --space-8: 4rem;
+
+  --radius:    4px;
+  --radius-sm: 2px;
+
+  --maxw-read: 68ch;
+  --maxw-wide: 1180px;
+
+  /* ---- motion (orientation, never decoration) ---- */
+  --dur:  180ms;
+  --dur-slow: 320ms;
+  --ease: cubic-bezier(0.2, 0.6, 0.2, 1);
+}
+
+@media (prefers-reduced-motion: reduce) {
+  :root { --dur: 0ms; --dur-slow: 0ms; }
+}

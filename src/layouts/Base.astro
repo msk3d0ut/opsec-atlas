@@ -1,0 +1,279 @@
+---
+import '../styles/global.css';
+import '../styles/components.css';
+import Omnibox from '../components/Omnibox.tsx';
+import VariableConsole from '../components/VariableConsole.tsx';
+import LoadoutTray from '../components/LoadoutTray.tsx';
+import JournalConsole from '../components/JournalConsole.tsx';
+
+interface Props { title: string; here?: string; description?: string }
+const { title, here, description } = Astro.props;
+const base = import.meta.env.BASE_URL;
+
+// The site-wide description (link previews + SEO); a page may override it.
+const SITE_DESC = 'The offensive-security atlas that routes you from what you hold to the exact next move · byte-exact commands, libraries, and the whole engagement, offline.';
+const desc = description ?? SITE_DESC;
+// Absolute URLs for the link-preview card and canonical (built from the `site`
+// config; required by LinkedIn/X/WhatsApp/Discord/Telegram, which need full URLs).
+const ogImage = new URL(`${base}og-image.png`, Astro.site).href;
+const canonical = new URL(Astro.url.pathname, Astro.site).href;
+---
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    {/* Defense-in-depth CSP. The atlas is fully self-contained (no third-party
+        scripts, fonts, or endpoints), so it locks every fetch to same-origin:
+        even if something ever injected script, it could not load external code or
+        exfiltrate the operator's Variable-Console creds off-device. 'unsafe-inline'
+        is required for Astro's inline island bootstrap + the layout's inline
+        scripts. object-src/base-uri are hard-denied. NB: frame-ancestors and
+        X-Frame-Options are header-only (ignored in a meta tag) -> set at deploy (7c). */}
+    <meta
+      http-equiv="Content-Security-Policy"
+      content="default-src 'self'; script-src 'self' 'unsafe-inline'; style-src 'self' 'unsafe-inline'; img-src 'self' data:; font-src 'self'; connect-src 'self'; manifest-src 'self'; worker-src 'self'; object-src 'none'; base-uri 'none'; form-action 'none'"
+    />
+    <meta name="description" content={desc} />
+    <link rel="canonical" href={canonical} />
+
+    <!-- Link-preview card: Open Graph (LinkedIn, WhatsApp, Discord, Telegram, Facebook) -->
+    <meta property="og:type" content="website" />
+    <meta property="og:site_name" content="OpsecAtlas" />
+    <meta property="og:title" content={title} />
+    <meta property="og:description" content={desc} />
+    <meta property="og:url" content={canonical} />
+    <meta property="og:image" content={ogImage} />
+    <meta property="og:image:type" content="image/png" />
+    <meta property="og:image:width" content="1200" />
+    <meta property="og:image:height" content="630" />
+    <meta property="og:image:alt" content="OpsecAtlas · the next-move engine" />
+    <!-- Twitter / X card -->
+    <meta name="twitter:card" content="summary_large_image" />
+    <meta name="twitter:title" content={title} />
+    <meta name="twitter:description" content={desc} />
+    <meta name="twitter:image" content={ogImage} />
+
+    <link rel="icon" type="image/svg+xml" href={`${base}favicon.svg`} />
+    <link rel="apple-touch-icon" href={`${base}apple-touch-icon.png`} />
+    <link rel="manifest" href={`${base}manifest.webmanifest`} />
+    <meta name="theme-color" content="#0e100e" />
+    <title>{title}</title>
+  </head>
+  <body>
+    <a class="skip-link" href="#main">Skip to content</a>
+    <header class="topbar">
+      <a class="wordmark" href={base} aria-label="Opsec Atlas home">
+        <span class="wm-word">OPSEC</span><svg class="mark wm-a" viewBox="4 4 24 24" aria-hidden="true" focusable="false">
+          <g fill="none" stroke-linecap="round" stroke-linejoin="round">
+            <path d="M16 9 6.5 26" stroke-width="2.3"></path>
+            <path d="M16 9 25.5 26" stroke-width="2.3"></path>
+            <path d="M10.6 18.6 21.4 18.6" stroke-width="2.3"></path>
+            <circle cx="6.5" cy="26" r="1.6" stroke-width="1.3"></circle>
+            <circle cx="25.5" cy="26" r="1.6" stroke-width="1.3"></circle>
+          </g>
+          <circle cx="16" cy="7" r="2.9"></circle>
+        </svg><span class="wm-word dim">TLAS</span>
+      </a>
+      <Omnibox client:load />
+      <VariableConsole client:load />
+      <LoadoutTray client:load />
+      <JournalConsole client:load />
+      {here && (
+        <span class="here"><span class="dot"></span><span class="here-pre">you are here: </span><span class="here-loc">{here}</span></span>
+      )}
+      <a class="gh-link" href="https://github.com/msk3d0ut" target="_blank" rel="noopener noreferrer" aria-label="GitHub · msk3d0ut" title="GitHub · msk3d0ut">
+        <svg class="gh-ico" viewBox="0 0 16 16" width="16" height="16" fill="currentColor" aria-hidden="true" focusable="false"><path fill-rule="evenodd" d="M8 0C3.58 0 0 3.58 0 8c0 3.54 2.29 6.53 5.47 7.59.4.07.55-.17.55-.38 0-.19-.01-.82-.01-1.49-2.01.37-2.53-.49-2.69-.94-.09-.23-.48-.94-.82-1.13-.28-.15-.68-.52-.01-.53.63-.01 1.08.58 1.23.82.72 1.21 1.87.87 2.33.66.07-.52.28-.87.51-1.07-1.78-.2-3.64-.89-3.64-3.95 0-.87.31-1.59.82-2.15-.08-.2-.36-1.02.08-2.12 0 0 .67-.21 2.2.82.64-.18 1.32-.27 2-.27.68 0 1.36.09 2 .27 1.53-1.04 2.2-.82 2.2-.82.44 1.1.16 1.92.08 2.12.51.56.82 1.27.82 2.15 0 3.07-1.87 3.75-3.65 3.95.29.25.54.73.54 1.48 0 1.07-.01 1.93-.01 2.2 0 .21.15.46.55.38A8.013 8.013 0 0 0 16 8c0-4.42-3.58-8-8-8z"></path></svg>
+      </a>
+    </header>
+    <main class="page" id="main">
+      <slot />
+    </main>
+    <footer class="site-foot">
+      <div class="foot-inner">
+        <div class="foot-brand">
+          <a class="wordmark foot-mark" href={base} aria-label="Opsec Atlas home">
+            <span class="wm-word">OPSEC</span><svg class="mark wm-a" viewBox="4 4 24 24" aria-hidden="true" focusable="false">
+              <g fill="none" stroke-linecap="round" stroke-linejoin="round">
+                <path d="M16 9 6.5 26" stroke-width="2.3"></path>
+                <path d="M16 9 25.5 26" stroke-width="2.3"></path>
+                <path d="M10.6 18.6 21.4 18.6" stroke-width="2.3"></path>
+                <circle cx="6.5" cy="26" r="1.6" stroke-width="1.3"></circle>
+                <circle cx="25.5" cy="26" r="1.6" stroke-width="1.3"></circle>
+              </g>
+              <circle cx="16" cy="7" r="2.9"></circle>
+            </svg><span class="wm-word dim">TLAS</span>
+          </a>
+          <p class="foot-desc">The offensive-security atlas an operator never has to leave. From first recon to Domain Admin: routed from what you hold, byte-exact, and yours to run offline.</p>
+          <a class="foot-cta" href={base}>Start where you are <span aria-hidden="true">→</span></a>
+        </div>
+        <nav class="foot-col" aria-label="Libraries">
+          <span class="foot-col-head">Libraries</span>
+          <a href={`${base}library/payloads`}>Payloads &amp; Shells</a>
+          <a href={`${base}library/commands`}>Command Library</a>
+          <a href={`${base}library/cves`}>CVE Vault</a>
+          <a href={`${base}library/owasp`}>OWASP Top 10</a>
+          <a href={`${base}library/cloud`}>Cloud</a>
+          <a href={`${base}library/tools`}>Tools</a>
+          <a href={`${base}library/wordlists`}>Wordlists</a>
+          <a href={`${base}technique/external-references`}>External References</a>
+        </nav>
+        <nav class="foot-col" aria-label="Playbooks">
+          <span class="foot-col-head">Playbooks</span>
+          <a href={`${base}library/how-to-use`}>How to Use Atlas</a>
+          <a href={`${base}library/methodologies`}>Methodologies</a>
+          <a href={`${base}library/what-to-record`}>What to Record</a>
+        </nav>
+        <div class="foot-col foot-tools">
+          <span class="foot-col-head">Toolkit</span>
+          <p><b>Engagement variables</b> · set your IP, target, and creds once in the top bar; every command across the atlas fills in, ready to copy.</p>
+          <p><b>Loadout</b> · pin commands as you work; export the whole tray as one ready-to-run runbook.</p>
+          <p><b>Journal</b> · log findings, creds, and hosts as you go; export a Markdown report skeleton.</p>
+        </div>
+        <div class="foot-base">
+          <span class="foot-principles">byte-exact · cross-linked · works offline · no accounts, no tracking</span>
+          <span class="foot-end">
+            <span class="foot-contact chip" data-u="info" data-d="opsecatlas.com">info <span aria-hidden="true">[at]</span> opsecatlas.com</span>
+            <span class="foot-sign">built by <a class="foot-gh" href="https://github.com/msk3d0ut" target="_blank" rel="noopener noreferrer">msk3d0ut</a></span>
+          </span>
+        </div>
+      </div>
+    </footer>
+    <script is:inline>
+      // Assemble the contact mailto on the client so the address is not in the
+      // static HTML source (basic scraper resistance). No-JS users still read the
+      // "info [at] opsecatlas.com" fallback.
+      (function () {
+        var el = document.querySelector('.foot-contact');
+        if (!el || !el.dataset || !el.dataset.u) return;
+        var addr = el.dataset.u + '@' + el.dataset.d;
+        var a = document.createElement('a');
+        a.className = 'foot-contact chip foot-mail';
+        a.href = 'mailto:' + addr;
+        a.textContent = addr;
+        el.replaceWith(a);
+      })();
+    </script>
+    <button class="to-top" type="button" aria-label="Back to top" title="Back to top">
+      <svg class="mark" viewBox="0 0 32 32" aria-hidden="true" focusable="false">
+        <g fill="none" stroke-linecap="round" stroke-linejoin="round">
+          <path d="M16 9 6.5 26" stroke-width="2.3"></path>
+          <path d="M16 9 25.5 26" stroke-width="2.3"></path>
+          <path d="M10.6 18.6 21.4 18.6" stroke-width="2.3"></path>
+          <circle cx="6.5" cy="26" r="1.6" stroke-width="1.3"></circle>
+          <circle cx="25.5" cy="26" r="1.6" stroke-width="1.3"></circle>
+        </g>
+        <circle cx="16" cy="7" r="2.9"></circle>
+      </svg>
+    </button>
+    <script>
+      // The universal "you are here" flash: a temporary amber wash on wherever
+      // you just landed, identical for every internal navigation.
+      let landTimer: number | undefined;
+      function flash(el: HTMLElement, scroll: boolean) {
+        if (scroll) el.scrollIntoView({ block: 'center' });
+        document.querySelectorAll('.oa-landed').forEach((n) => n.classList.remove('oa-landed'));
+        void el.offsetWidth; // restart the flash on a repeat hit
+        el.classList.add('oa-landed');
+        clearTimeout(landTimer);
+        landTimer = window.setTimeout(() => el.classList.remove('oa-landed'), 5200);
+      }
+      // Resolve an `L<n>` deep-link to a real element. Only a command's FIRST line
+      // renders its own L-anchor; a hit on a multi-line command's continuation, a
+      // comment/note, or a figure line has no exact node. Fall back to the nearest
+      // PRECEDING L-anchor (the block that contains that source line) so search
+      // always lands on the line's block, never silently at the top of the page.
+      function findTarget(id: string): HTMLElement | null {
+        const exact = document.getElementById(id);
+        if (exact) return exact;
+        const m = /^L(\d+)$/.exec(id);
+        if (!m) return null;
+        const want = Number(m[1]);
+        let best: HTMLElement | null = null;
+        let bestN = -1;
+        document.querySelectorAll<HTMLElement>('[id^="L"]').forEach((n) => {
+          const mm = /^L(\d+)$/.exec(n.id);
+          if (!mm) return;
+          const v = Number(mm[1]);
+          if (v <= want && v > bestN) { bestN = v; best = n; }
+        });
+        return best;
+      }
+      // Lands-on-line guarantee: open any collapsed <details> ancestors of the
+      // deep-link target and scroll it into view (a hidden line cannot be reached).
+      function revealTarget(scroll: boolean) {
+        const id = location.hash.slice(1);
+        if (!id) return;
+        const el = findTarget(id);
+        if (!el) return;
+        let p = el.parentElement;
+        while (p) { if (p.tagName === 'DETAILS') (p as HTMLDetailsElement).open = true; p = p.parentElement; }
+        flash(el, scroll);
+      }
+      // On a FRESH load the deep-link target almost always lives inside a
+      // client:load island (TechniqueCard, CmdList, ...). Preact hydration resets
+      // className on those nodes AFTER the first flash, silently wiping the "you
+      // are here" wash — so a cross-page search landing would scroll but never
+      // highlight. Re-assert the landing through the hydration window: scroll once,
+      // then keep the flash present until the island settles.
+      function landOnLoad() {
+        if (!location.hash.slice(1)) return;
+        let tries = 0, scrolled = false;
+        const tick = () => {
+          const el = findTarget(location.hash.slice(1));
+          if (el) {
+            if (!scrolled) { revealTarget(true); scrolled = true; }
+            else if (!el.classList.contains('oa-landed')) revealTarget(false);
+          }
+          if (++tries < 40) window.setTimeout(tick, 60); // ~2.4s, spans island hydration
+        };
+        tick();
+      }
+      // The highlight fires ONLY for a real destination: a hash target (a search
+      // result landing on a line, or a related link anchored to a section). It
+      // washes that exact element, never the page title, and never on a plain
+      // page load (a homepage card, the logo home) which carries no hash.
+      window.addEventListener('hashchange', () => revealTarget(true));
+      window.addEventListener('load', () => setTimeout(landOnLoad, 40));
+
+      // Back-to-top reticle: the "you are here" mark turned into a return-to-
+      // origin. It surfaces while you scroll (past a threshold) and recedes after
+      // a quiet moment, so it never sits as permanent chrome · a flick of the
+      // wheel summons it back, and hovering holds it so you can actually reach it.
+      const toTop = document.querySelector('.to-top');
+      if (toTop) {
+        let idle: number | undefined;
+        let over = false;
+        const fade = (delay: number) => { clearTimeout(idle); idle = window.setTimeout(() => { if (!over) toTop.classList.remove('visible'); }, delay); };
+        const onScroll = () => {
+          if (window.scrollY > 600) { toTop.classList.add('visible'); fade(1600); }
+          else { clearTimeout(idle); toTop.classList.remove('visible'); }
+        };
+        window.addEventListener('scroll', onScroll, { passive: true });
+        toTop.addEventListener('mouseenter', () => { over = true; clearTimeout(idle); });
+        toTop.addEventListener('mouseleave', () => { over = false; fade(1200); });
+        toTop.addEventListener('click', () => {
+          const reduce = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+          window.scrollTo({ top: 0, behavior: reduce ? 'auto' : 'smooth' });
+        });
+      }
+    </script>
+    <script is:inline define:vars={{ swUrl: `${base}sw.js` }}>
+      // Register the offline service worker (the plugin builds sw.js + the
+      // manifest but does not wire them into the HTML, so we do it explicitly).
+      // Harmless in dev, where no sw.js is emitted (the fetch just 404s).
+      //
+      // updateViaCache:'none' makes the browser bypass the HTTP cache for BOTH
+      // sw.js and its imports on every update check, so a new deploy is detected
+      // on the very next visit regardless of the host/CDN cache headers. The SW
+      // itself is built with skipWaiting + clientsClaim + cleanupOutdatedCaches
+      // (registerType:'autoUpdate'), so the new version takes over automatically
+      // and purges the stale precache — no visitor is ever stuck on an old build.
+      if ('serviceWorker' in navigator) {
+        window.addEventListener('load', () => {
+          navigator.serviceWorker.register(swUrl, { updateViaCache: 'none' }).catch(() => {});
+        });
+      }
+    </script>
+  </body>
+</html>

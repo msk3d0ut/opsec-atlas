@@ -1,0 +1,76 @@
+---
+import Base from '../../layouts/Base.astro';
+const base = import.meta.env.BASE_URL;
+
+// Not an about-page (the homepage already says what Atlas is). This is the
+// operating flow: how to run a live engagement THROUGH Atlas, tying the tools
+// into one continuous line. House voice, no em dashes.
+const STEPS: { id: string; title: string; tag: string; body: string; link?: { label: string; to: string } }[] = [
+  {
+    id: 'variables',
+    title: 'Set your engagement',
+    tag: 'variables',
+    body: 'Open $_ vars in the top bar and set your IP, target, domain, and credentials once. From then on every command across the atlas fills in with your real values and copies ready to run. Set them once, and never retype them.',
+  },
+  {
+    id: 'start',
+    title: 'Start where you are',
+    tag: 'the engine',
+    body: 'Tell the atlas what you hold and it routes you to the ordered next moves, each a real technique with byte-exact commands. Or press Ctrl K: type a command to land on the exact line, a technique to open its page, or what you hold to get routed.',
+  },
+  {
+    id: 'work',
+    title: 'Work the technique',
+    tag: 'one continuous flow',
+    body: 'Every page is byte-exact and cross-linked. When you are done, the connected rail at the bottom carries you onward: what this leads to, what it follows, and the tools that do it.',
+  },
+  {
+    id: 'loadout',
+    title: 'Build your loadout',
+    tag: 'the runbook',
+    body: 'Pin any command as you work and it lands in your loadout, already filled with your engagement variables. Export the whole tray as one ready-to-run runbook when you are done, or hand it to a teammate.',
+  },
+  {
+    id: 'record',
+    title: 'Record as you go',
+    tag: 'the report writes itself',
+    body: 'Open the journal in the top bar and log every finding, credential, host, and note the moment you hit it, not from memory at the end. Export the lot as a Markdown report skeleton, grouped and severity-sorted, ready to flesh out. The checklist tells you exactly what to capture at each step.',
+    link: { label: 'What to Record', to: 'library/what-to-record' },
+  },
+  {
+    id: 'map',
+    title: 'The whole map',
+    tag: 'reference + range',
+    body: 'Seven hubs for grab-and-go reference, six domains for the full technique library, and the playbooks for the ordered thinking. Everything cross-links, so the judgment and the reference are one product.',
+  },
+];
+---
+<Base title="How to Use Atlas · OpsecAtlas" here="How to Use Atlas">
+  <div class="tech-head">
+    <span class="label kicker">playbook</span>
+    <h1>How to Use Atlas</h1>
+    <p class="tech-sub">
+      <span class="label">{STEPS.length} steps</span>
+      <span class="meta-n">running a live engagement through the atlas, from first recon to the report</span>
+    </p>
+    <p class="lib-note">
+      Atlas is not a wiki you read. It is a tool you operate. Set your variables once, start where you are, pin what works, and record as you go: the whole engagement moves through one continuous line.
+    </p>
+  </div>
+
+  <ol class="guide-steps">
+  {STEPS.map((s, i) => (
+    <li class="guide-step" id={s.id}>
+      <div class="guide-step-head">
+        <span class="guide-n" aria-hidden="true">{String(i + 1).padStart(2, '0')}</span>
+        <h2 class="guide-title">{s.title}</h2>
+      </div>
+      <span class="guide-tag">{s.tag}</span>
+      <p class="guide-body">{s.body}</p>
+      {s.link && (
+        <a class="chip chip-ref guide-link" href={`${base}${s.link.to}`}>{s.link.label} <span aria-hidden="true">→</span></a>
+      )}
+    </li>
+  ))}
+  </ol>
+</Base>

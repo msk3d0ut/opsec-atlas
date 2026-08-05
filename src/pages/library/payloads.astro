@@ -1,0 +1,50 @@
+---
+import Base from '../../layouts/Base.astro';
+import PayloadList from '../../components/PayloadList.tsx';
+import HubIndex from '../../components/HubIndex.astro';
+import { PAYLOAD_CATEGORIES } from '../../data/payloads.ts';
+const base = import.meta.env.BASE_URL;
+const total = PAYLOAD_CATEGORIES.reduce((n, c) => n + c.payloads.length, 0);
+---
+<Base title="Payloads & Shells · OpsecAtlas" here="Payloads & Shells">
+  <div class="tech-head">
+    <span class="label kicker">library</span>
+    <h1>Payloads &amp; Shells</h1>
+    <p class="tech-sub">
+      <span class="label">{total} snippets</span>
+      <span class="meta-n">reverse · web · bind · listeners · msfvenom</span>
+    </p>
+    <p class="lib-note">
+      Set your IP and port once in <strong>$_ vars</strong> and every payload here fills in your values, ready to copy and run. No jumping to another site.
+    </p>
+  </div>
+
+  <HubIndex label="Payload categories" items={PAYLOAD_CATEGORIES.map((c) => ({ id: c.id, label: c.title, badge: c.payloads.length }))} />
+
+  <div class="rail-col">
+  {PAYLOAD_CATEGORIES.map((cat) => (
+    <details class="section" id={cat.id} open>
+      <summary class="section-head"><span class="section-chev" aria-hidden="true">›</span>{cat.title}<span class="section-count"> / {cat.payloads.length}</span></summary>
+      <div class="section-body">
+        <p class="cmd-note">{cat.blurb}</p>
+        <PayloadList payloads={cat.payloads} catId={cat.id} client:visible />
+      </div>
+    </details>
+  ))}
+  </div>
+
+  <section class="connected">
+    <span class="label kicker">connected</span>
+    <p class="cmd-note">These are the artifacts you drop and run; the playbooks sequence them, and the Loadout exports your picked set as a ready-to-run runbook.</p>
+    <div class="connected-rows">
+      <div class="conn-row">
+        <span class="label conn-label">related</span>
+        <div class="conn-chips">
+          <a class="chip chip-ref sm" href={`${base}library/commands`}>Command Library</a>
+          <a class="chip chip-ref sm" href={`${base}library/methodologies#privilege-escalation`}>Privilege Escalation</a>
+          <a class="chip chip-ref sm" href={`${base}library/methodologies#lateral-movement`}>Lateral Movement</a>
+        </div>
+      </div>
+    </div>
+  </section>
+</Base>

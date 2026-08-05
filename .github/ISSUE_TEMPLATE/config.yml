@@ -1,0 +1,8 @@
+blank_issues_enabled: false
+contact_links:
+  - name: Open the atlas
+    url: https://opsecatlas.com
+    about: Browse the live reference.
+  - name: How to contribute
+    url: https://github.com/msk3d0ut/opsec-atlas/blob/main/CONTRIBUTING.md
+    about: Add a technique with a single Markdown pull request.

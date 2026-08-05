@@ -1,0 +1,130 @@
+---
+import Base from '../layouts/Base.astro';
+import { activeStates, techniquesByDomain, cleanTitle, plural } from '../lib/data.ts';
+const base = import.meta.env.BASE_URL;
+const states = activeStates();
+const domains = techniquesByDomain();
+const totalTechniques = domains.reduce((n, d) => n + d.techniques.length, 0);
+---
+<Base title="OpsecAtlas · the next-move engine">
+  <div class="doors-head">
+    <span class="label kicker">what do you have?</span>
+    <h1>Start where you are.</h1>
+    <p class="sub">
+      Tell the atlas what you hold and it routes you to the exact next moves, in
+      order, with byte-exact commands. Or browse the whole map below.
+    </p>
+  </div>
+
+  <ul class="doors">
+    {states.map((s) => (
+      <li>
+        <a class="door" href={`${base}route/${s.id}`}>
+          <span class="have">I have</span>
+          <span class="name">{s.label} <span class="count">/ {plural(s.count, 'move')}</span></span>
+        </a>
+      </li>
+    ))}
+  </ul>
+
+  <div class="libraries">
+    <div class="browse-head">
+      <span class="label kicker">grab and go</span>
+      <h2>Libraries</h2>
+    </div>
+    <ul class="lib-cards grid-libraries">
+      <li>
+        <a class="lib-card" href={`${base}library/payloads`}>
+          <span class="lib-title">Payloads &amp; Shells <span class="lib-arrow" aria-hidden="true">→</span></span>
+          <span class="lib-desc">Reverse, web, bind shells + listeners + msfvenom. Auto-filled with your IP and port.</span>
+        </a>
+      </li>
+      <li>
+        <a class="lib-card" href={`${base}library/commands`}>
+          <span class="lib-title">Command Library <span class="lib-arrow" aria-hidden="true">→</span></span>
+          <span class="lib-desc">Linux &amp; Windows, grouped by intent, in the order you need them. Auto-filled with your target.</span>
+        </a>
+      </li>
+      <li>
+        <a class="lib-card" href={`${base}library/cves`}>
+          <span class="lib-title">CVE Vault <span class="lib-arrow" aria-hidden="true">→</span></span>
+          <span class="lib-desc">The CVEs worth knowing cold · what they are, why they mattered, and working exploitation.</span>
+        </a>
+      </li>
+      <li>
+        <a class="lib-card" href={`${base}library/owasp`}>
+          <span class="lib-title">OWASP Top 10 <span class="lib-arrow" aria-hidden="true">→</span></span>
+          <span class="lib-desc">The ten web-risk categories, each a working reference · how it works, where to look, and copy-ready exploitation.</span>
+        </a>
+      </li>
+      <li>
+        <a class="lib-card" href={`${base}library/cloud`}>
+          <span class="lib-title">Cloud <span class="lib-arrow" aria-hidden="true">→</span></span>
+          <span class="lib-desc">AWS, Azure &amp; GCP offensive security · enumerate, harvest credentials, escalate, and persist, the way you move through a tenant.</span>
+        </a>
+      </li>
+      <li>
+        <a class="lib-card" href={`${base}library/tools`}>
+          <span class="lib-title">Tools <span class="lib-arrow" aria-hidden="true">→</span></span>
+          <span class="lib-desc">The tools operators actually reach for · the modern recon chain, AD toolkit, C2s, cracking, pivoting, and the reporting stack, each with when to use it.</span>
+        </a>
+      </li>
+      <li>
+        <a class="lib-card" href={`${base}library/wordlists`}>
+          <span class="lib-title">Wordlists <span class="lib-arrow" aria-hidden="true">→</span></span>
+          <span class="lib-desc">The other half of every fuzz, crack, and spray · the lists operators reach for, each with the exact path it lives at on Kali.</span>
+        </a>
+      </li>
+      <li>
+        <a class="lib-card" href={`${base}technique/external-references`}>
+          <span class="lib-title">External References <span class="lib-arrow" aria-hidden="true">→</span></span>
+          <span class="lib-desc">The wikis, live tools, and cheat sheets worth bookmarking · HackTricks, GTFOBins, PayloadsAllTheThings, RevShells, and more, each with what to use it for.</span>
+        </a>
+      </li>
+    </ul>
+  </div>
+
+  <div class="libraries">
+    <div class="browse-head">
+      <span class="label kicker">how to operate</span>
+      <h2>Playbooks</h2>
+    </div>
+    <ul class="lib-cards grid-playbooks">
+      <li>
+        <a class="lib-card" href={`${base}library/how-to-use`}>
+          <span class="lib-title">How to Use Atlas <span class="lib-arrow" aria-hidden="true">→</span></span>
+          <span class="lib-desc">Not a wiki you read, a tool you operate · set your variables, start where you are, pin what works, record as you go, from first recon to the report.</span>
+        </a>
+      </li>
+      <li>
+        <a class="lib-card" href={`${base}library/methodologies`}>
+          <span class="lib-title">Methodologies <span class="lib-arrow" aria-hidden="true">→</span></span>
+          <span class="lib-desc">The ordered thinking behind an engagement · enumeration, privesc, lateral movement, AD, and web, each cross-linked to the exact commands.</span>
+        </a>
+      </li>
+      <li>
+        <a class="lib-card" href={`${base}library/what-to-record`}>
+          <span class="lib-title">What to Record <span class="lib-arrow" aria-hidden="true">→</span></span>
+          <span class="lib-desc">The documentation checklist · scope, hosts, credentials, access, evidence, and cleanup, captured as you go so the report writes itself.</span>
+        </a>
+      </li>
+    </ul>
+  </div>
+
+  <div class="browse">
+    <div class="browse-head">
+      <span class="label kicker">the whole map</span>
+      <h2>Browse the atlas <span class="count">/ {totalTechniques} techniques across {domains.length} domains</span></h2>
+    </div>
+    {domains.map((d) => (
+      <section class="domain" id={d.id}>
+        <h3 class="domain-name"><span class="tick">+</span>{d.label}<span class="count"> / {d.techniques.length}</span></h3>
+        <ul class="tech-list">
+          {d.techniques.map((t) => (
+            <li><a href={`${base}technique/${t.slug}`}>{cleanTitle(t.title)}</a></li>
+          ))}
+        </ul>
+      </section>
+    ))}
+  </div>
+</Base>

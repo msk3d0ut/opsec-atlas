@@ -1,0 +1,3 @@
+# Authored content drives a line-sensitive literal search index (lands-on-line).
+# Force LF so line numbers never drift between OSes / checkouts.
+src/content/atlas/*.md text eol=lf

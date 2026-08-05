@@ -1,0 +1,116 @@
+---
+import Base from '../../layouts/Base.astro';
+import HubIndex from '../../components/HubIndex.astro';
+
+// The other half of an engagement: not how to attack (that is the reference),
+// but what to write down while you do, so evidence, access, and proof survive
+// and the report is already half-written. Curated, house voice, no em dashes.
+const SECTIONS: { id: string; title: string; tag: string; items: string[] }[] = [
+  {
+    id: 'authorization',
+    title: 'Before you touch anything',
+    tag: 'get it in writing',
+    items: [
+      'The exact scope: in-scope IPs, ranges, domains, URLs, and apps. And in writing, what is explicitly OUT of scope.',
+      'Signed authorization and the rules of engagement: the dates, the hours, and the methods you are permitted to use.',
+      'Your points of contact and the escalation path: who to call the moment something breaks or a critical finding lands.',
+      'The constraints: no-go actions, fragile hosts, maintenance windows, and anything you must not touch.',
+    ],
+  },
+  {
+    id: 'hosts',
+    title: 'Every host',
+    tag: 'the map',
+    items: [
+      'IP and hostname, and how they map to each other.',
+      'Operating system and version, and which segment or pivot you can reach it from.',
+      'Every open port, with the service and its exact version.',
+      'Anything already exposed without auth: shares, panels, directory listings, default pages.',
+    ],
+  },
+  {
+    id: 'credentials',
+    title: 'Every credential',
+    tag: 'the keys',
+    items: [
+      'The credential itself and its type: a username with a password, an NTLM hash, a Kerberos ticket, an API key.',
+      'Where it came from: the host, file, dump, or capture that handed it to you.',
+      'Where it works: every host or service it validated against, and the privilege it grants.',
+      'Whether it is reused anywhere else. One password across hosts is a finding on its own.',
+    ],
+  },
+  {
+    id: 'access',
+    title: 'Access and movement',
+    tag: 'the path',
+    items: [
+      'How you got each foothold: the exact vulnerability or credential, with the command that worked.',
+      'The privilege escalation on each host: from which user, to which, and through what.',
+      'Lateral movement: source, destination, method, and the credential used for each hop.',
+      'A running timeline: the moment you gained each new level of access.',
+    ],
+  },
+  {
+    id: 'findings',
+    title: 'Findings and evidence',
+    tag: 'the report writes itself',
+    items: [
+      'The vulnerability, the affected asset, and a severity you can defend.',
+      'Reproduction: the exact steps, requests, and commands, so someone else can repeat it cold.',
+      'Proof of impact: output or a screenshot that shows it is real (whoami, hostname, the flag, the record you could read).',
+      'A timestamp on every action that touched a target: date, time, and your source IP.',
+    ],
+  },
+  {
+    id: 'cleanup',
+    title: 'Cleanup and artifacts',
+    tag: 'leave nothing behind',
+    items: [
+      'Every file you dropped, with its full path and host.',
+      'Every account, service, scheduled task, or implant you created.',
+      'Every configuration you changed, and how to revert it.',
+      'A final pass confirming all of it is gone. Nothing you introduced should outlive the engagement.',
+    ],
+  },
+  {
+    id: 'report',
+    title: 'For the report',
+    tag: 'the deliverable',
+    items: [
+      'One line of business impact per finding, in the language the client actually cares about.',
+      'Concrete remediation, not just "apply patches": the specific change that closes it.',
+      'The timeline of the engagement, and the scope you actually covered.',
+      'What you could not reach or test, so the gaps are honest and on the record.',
+    ],
+  },
+];
+---
+<Base title="What to Record · OpsecAtlas" here="What to Record">
+  <div class="tech-head">
+    <span class="label kicker">playbook</span>
+    <h1>What to Record</h1>
+    <p class="tech-sub">
+      <span class="label">{SECTIONS.length} checklists</span>
+      <span class="meta-n">what to capture at every step, so nothing is lost and the report is already half-written</span>
+    </p>
+    <p class="lib-note">
+      The rest of the atlas tells you how to attack. This is the other half: what to write down while you do it. Capture these as you go, not from memory at the end, and the evidence, the access, and the proof survive the engagement.
+    </p>
+  </div>
+
+  <HubIndex label="Field notes" items={SECTIONS.map((s) => ({ id: s.id, label: s.title }))} />
+
+  <ol class="timeline doc-timeline">
+  {SECTIONS.map((s, i) => (
+    <li class="tl-phase" id={s.id}>
+      <div class="tl-node"><span>{String(i + 1).padStart(2, '0')}</span></div>
+      <div class="tl-content">
+        <div class="tl-name">{s.title} <span class="method-tag">{s.tag}</span></div>
+        <ul class="list doc-list">
+          {s.items.map((it) => <li>{it}</li>)}
+        </ul>
+      </div>
+    </li>
+  ))}
+  </ol>
+</Base>

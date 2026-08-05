@@ -1,0 +1,51 @@
+---
+import Base from '../../layouts/Base.astro';
+import HubIndex from '../../components/HubIndex.astro';
+import { WORDLISTS } from '../../data/wordlists.ts';
+const total = WORDLISTS.reduce((n, c) => n + c.lists.length, 0);
+---
+<Base title="Wordlists · OpsecAtlas" here="Wordlists">
+  <div class="tech-head">
+    <span class="label kicker">library</span>
+    <h1>Wordlists</h1>
+    <p class="tech-sub">
+      <span class="label">{total} wordlists</span>
+      <span class="meta-n">the path · when you reach for it</span>
+    </p>
+    <p class="lib-note">
+      The other half of every fuzz, crack, and spray. Not a catalogue of all of SecLists · the lists operators actually reach for, each with the exact path it lives at on Kali. Paths assume a standard install (SecLists at <code>/usr/share/seclists</code>).
+    </p>
+  </div>
+
+  <HubIndex label="Categories" items={WORDLISTS.map((c) => ({ id: c.id, label: c.title, badge: c.lists.length }))} />
+
+  <div class="rail-col">
+  {WORDLISTS.map((cat) => (
+    <details class="section" id={cat.id} open>
+      <summary class="section-head tool-cat-head">
+        <span class="section-chev" aria-hidden="true">›</span>
+        <span class="tool-cat-title">{cat.title}</span>
+        <span class="owasp-tag">{cat.short}</span>
+      </summary>
+      <div class="section-body">
+        <p class="lib-note tool-cat-blurb">{cat.blurb}</p>
+        <ul class="tool-list wl-list">
+          {cat.lists.map((w) => (
+            <li class="tool-item wl-item">
+              <div class="tool-head">
+                {w.url
+                  ? <a class="tool-name" href={w.url} target="_blank" rel="noopener noreferrer">{w.name} <span aria-hidden="true">↗</span></a>
+                  : <span class="tool-name wl-name">{w.name}</span>}
+                {w.tag && <span class="tool-tag">{w.tag}</span>}
+              </div>
+              <code class="wl-path">{w.path}</code>
+              <p class="tool-what">{w.what}</p>
+              <p class="tool-when"><span class="label">when</span> {w.when}</p>
+            </li>
+          ))}
+        </ul>
+      </div>
+    </details>
+  ))}
+  </div>
+</Base>

@@ -1,0 +1,15 @@
+---
+import Base from '../layouts/Base.astro';
+const base = import.meta.env.BASE_URL;
+---
+<Base title="Off the map · OpsecAtlas">
+  <div class="notfound">
+    <span class="label kicker">404 · off the map</span>
+    <h1>This coordinate isn't on the atlas.</h1>
+    <p class="sub">
+      Nothing charts here. Head back to base, or press <kbd class="nf-kbd">Ctrl K</kbd>
+      to search for a command, a technique, or what you hold.
+    </p>
+    <a class="foot-cta nf-cta" href={base}>Back to the atlas <span aria-hidden="true">&rarr;</span></a>
+  </div>
+</Base>

@@ -1,0 +1,68 @@
+---
+import Base from '../../layouts/Base.astro';
+import CmdList from '../../components/CmdList.tsx';
+import HubIndex from '../../components/HubIndex.astro';
+import { CLOUD } from '../../data/cloud.ts';
+const base = import.meta.env.BASE_URL;
+// Reuses the shared hub-chrome classes (owasp-index / owasp-badge / owasp-block
+// etc.) so the look is identical across hubs; naming is consolidated in the
+// design-parity pass. Cloud-specific bits are the badge width tweaks in CSS.
+const cmds = CLOUD.reduce((n, p) => n + p.phases.reduce((m, ph) => m + ph.cmds.length, 0), 0);
+---
+<Base title="Cloud · OpsecAtlas" here="Cloud">
+  <div class="tech-head">
+    <span class="label kicker">library</span>
+    <h1>Cloud</h1>
+    <p class="tech-sub">
+      <span class="label">{CLOUD.length} providers</span>
+      <span class="meta-n">{cmds} commands · enumerate → escalate → persist</span>
+    </p>
+    <p class="lib-note">
+      Offensive security for the three major clouds, the way you actually move through a tenant. Commands copy byte-exact; pin any to your <strong>loadout</strong> and set <strong>$_ vars</strong> where they apply.
+    </p>
+  </div>
+
+  <HubIndex label="Cloud providers" items={CLOUD.map((p) => ({ id: p.id, label: p.name, badge: p.short }))} />
+
+  <div class="rail-col">
+  {CLOUD.map((p) => (
+    <details class="section owasp cloud" id={p.id} open>
+      <summary class="section-head owasp-head">
+        <span class="section-chev" aria-hidden="true">›</span>
+        <span class="owasp-badge cloud-badge">{p.short}</span>
+        <span class="owasp-title">{p.name}</span>
+        <span class="owasp-tag">{p.tag}</span>
+      </summary>
+      <div class="section-body">
+        <p class="prose">{p.intro}</p>
+        {p.phases.map((ph) => (
+          <div class="owasp-block" id={ph.id}>
+            <h3 class="owasp-block-head">{ph.title}</h3>
+            {ph.blurb && <p class="cmd-note">{ph.blurb}</p>}
+            <CmdList commands={ph.cmds} client:visible />
+          </div>
+        ))}
+        <p class="cve-refs">
+          <span class="label">refs</span>
+          {p.refs.map((r) => <a class="chip chip-tool" href={r.url} target="_blank" rel="noopener noreferrer">{r.label} ↗</a>)}
+        </p>
+      </div>
+    </details>
+  ))}
+  </div>
+
+  <section class="connected">
+    <span class="label kicker">connected</span>
+    <p class="cmd-note">Credential theft through the metadata endpoint is Server-Side Request Forgery; after code execution you reach for shells and post-access commands.</p>
+    <div class="connected-rows">
+      <div class="conn-row">
+        <span class="label conn-label">related</span>
+        <div class="conn-chips">
+          <a class="chip chip-ref sm" href={`${base}library/owasp#ssrf`}>OWASP: SSRF</a>
+          <a class="chip chip-ref sm" href={`${base}library/payloads`}>Payloads</a>
+          <a class="chip chip-ref sm" href={`${base}library/commands`}>Command Library</a>
+        </div>
+      </div>
+    </div>
+  </section>
+</Base>

@@ -1,0 +1,5 @@
+Contact: mailto:security@opsecatlas.com
+Expires: 2027-08-04T00:00:00Z
+Preferred-Languages: en
+Canonical: https://opsecatlas.com/.well-known/security.txt
+Policy: https://github.com/msk3d0ut/opsec-atlas/blob/main/SECURITY.md

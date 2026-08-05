@@ -1,0 +1,17 @@
+---
+// Shared hub jump-index: the top chip row that jumps to a section within a hub.
+// One component, one look, across all six hubs (Payloads, Commands, CVEs, OWASP,
+// Cloud, Methodologies). Replaces the old split owasp-index / method-index.
+// Pure static (anchor links) · no client JS. `badge` is an optional mono tag
+// (rank, provider short, or count) shown before the label.
+interface Item { id: string; label: string; badge?: string | number }
+const { items, label } = Astro.props as { items: Item[]; label: string };
+---
+<nav class="hub-index" aria-label={label}>
+  {items.map((i) => (
+    <a class="hub-chip" href={`#${i.id}`}>
+      {i.badge != null && i.badge !== '' && <span class="hub-badge">{i.badge}</span>}
+      {i.label}
+    </a>
+  ))}
+</nav>

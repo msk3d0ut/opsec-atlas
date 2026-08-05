@@ -1,0 +1,82 @@
+---
+import Base from '../../layouts/Base.astro';
+import CmdList from '../../components/CmdList.tsx';
+import HubIndex from '../../components/HubIndex.astro';
+import { METHODOLOGIES } from '../../data/methodologies.ts';
+const base = import.meta.env.BASE_URL;
+const pad = (n: number) => String(n).padStart(2, '0');
+---
+<Base title="Methodologies · OpsecAtlas" here="Playbooks">
+  <div class="tech-head">
+    <span class="label kicker">playbook</span>
+    <h1>Methodologies</h1>
+    <p class="tech-sub">
+      <span class="label">{METHODOLOGIES.length} playbooks</span>
+      <span class="meta-n">how experienced operators think · what to reach for, in what order, and why</span>
+    </p>
+    <p class="lib-note">
+      Not what a command does (that is the reference), but the ordered thinking behind an engagement. Each step links to the exact techniques and commands, so the judgment and the reference are one product.
+    </p>
+  </div>
+
+  <HubIndex label="Playbooks" items={METHODOLOGIES.map((m) => ({ id: m.id, label: m.title }))} />
+
+  <div class="rail-col">
+  {METHODOLOGIES.map((m) => (
+    <details class="section method" id={m.id} open>
+      <summary class="section-head method-head">
+        <span class="section-chev" aria-hidden="true">›</span>
+        <span class="method-title">{m.title}</span>
+        <span class="method-tag">{m.tag}</span>
+      </summary>
+      <div class="section-body">
+        <p class="method-premise">{m.premise}</p>
+
+        {m.phases.map((ph, i) => (
+          <div class="method-phase" id={ph.id}>
+            <div class="phase-head">
+              <span class="phase-num" aria-hidden="true">{pad(i + 1)}</span>
+              <div class="phase-headtext">
+                <h3 class="phase-title">{ph.title.replace(/^Phase \d+ · /, '')}</h3>
+                <p class="phase-goal">{ph.goal}</p>
+              </div>
+            </div>
+
+            <div class="phase-steps">
+              {ph.steps.map((s) => (
+                <div class="method-step">
+                  <h4 class="method-step-title">{s.title}</h4>
+                  {s.detail && <p class="method-step-detail">{s.detail}</p>}
+                  {s.moves && (
+                    <ul class="method-moves">
+                      {s.moves.map((mv) => <li>{mv}</li>)}
+                    </ul>
+                  )}
+                  {s.cmds && <CmdList commands={s.cmds} client:visible />}
+                  {s.link && (
+                    <a class="chip chip-ref method-link" href={`${base}${s.link.to}`}>{s.link.label} <span aria-hidden="true">→</span></a>
+                  )}
+                </div>
+              ))}
+            </div>
+          </div>
+        ))}
+
+        <div class="method-principles">
+          <span class="label">operating principles</span>
+          <ul>
+            {m.principles.map((p) => <li>{p}</li>)}
+          </ul>
+        </div>
+
+        {m.refs && (
+          <p class="cve-refs">
+            <span class="label">refs</span>
+            {m.refs.map((r) => <a class="chip chip-tool" href={r.url} target="_blank" rel="noopener noreferrer">{r.label} ↗</a>)}
+          </p>
+        )}
+      </div>
+    </details>
+  ))}
+  </div>
+</Base>
