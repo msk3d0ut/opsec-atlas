@@ -7,7 +7,7 @@ import { owaspHandsOn } from '../../lib/data.ts';
 const base = import.meta.env.BASE_URL;
 const rows = OWASP.reduce((n, e) => n + e.blocks.reduce((m, b) => m + b.rows.length, 0), 0);
 ---
-<Base title="OWASP Top 10 · OpsecAtlas" here="OWASP Top 10">
+<Base title="OWASP Top 10 · OpsecAtlas" here="OWASP Top 10" description="Hands-on OWASP Top 10 reference for web penetration testing, with attack paths, payloads, commands, detection points, and remediation guidance.">
   <div class="tech-head">
     <span class="label kicker">library</span>
     <h1>OWASP Top 10</h1>

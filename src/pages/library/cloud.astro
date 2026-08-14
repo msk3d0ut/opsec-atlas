@@ -9,7 +9,7 @@ const base = import.meta.env.BASE_URL;
 // design-parity pass. Cloud-specific bits are the badge width tweaks in CSS.
 const cmds = CLOUD.reduce((n, p) => n + p.phases.reduce((m, ph) => m + ph.cmds.length, 0), 0);
 ---
-<Base title="Cloud · OpsecAtlas" here="Cloud">
+<Base title="Cloud · OpsecAtlas" here="Cloud" description="Offensive-security reference for AWS, Azure, and GCP: enumerate tenants, harvest credentials, escalate privileges, persist, and move through cloud attack paths.">
   <div class="tech-head">
     <span class="label kicker">library</span>
     <h1>Cloud</h1>

@@ -1,17 +1,22 @@
 // @ts-check
 import { defineConfig } from 'astro/config';
 import preact from '@astrojs/preact';
+import sitemap from '@astrojs/sitemap';
 import AstroPWA from '@vite-pwa/astro';
 
-// Base path: root locally; the `/opsec-atlas/` subpath is a deploy-time concern
-// we switch on when we actually ship. Not deploying yet (Z's standing rule).
+// Base path stays at root in production; alternate hosts/previews may override it.
 const base = process.env.BASE_PATH || '/';
 
-// Canonical origin, used to build ABSOLUTE og:image / og:url / canonical links
-// (link-preview cards on LinkedIn/X/WhatsApp/Discord/Telegram require absolute
-// URLs). Placeholder until the domain is bought; at deploy set SITE_URL to the
-// real origin (e.g. https://opsecatlas.com, or https://<user>.github.io for Pages).
+// Canonical production origin. Preview/alternate deployments may override SITE_URL.
 const site = process.env.SITE_URL || 'https://opsecatlas.com';
+
+// Keep non-indexable utility roots out of XML discovery. Their leaf pages remain included.
+const normalizeUrl = (url) => url.replace(/\/$/, '');
+const sitemapExclusions = new Set(
+  ['404', 'library', 'route', 'technique'].map((p) =>
+    normalizeUrl(new URL(`${base}${p}`, site).href),
+  ),
+);
 
 // https://astro.build/config
 export default defineConfig({
@@ -20,6 +25,12 @@ export default defineConfig({
   trailingSlash: 'ignore',
   integrations: [
     preact(),
+    sitemap({
+      filter: (page) => !sitemapExclusions.has(normalizeUrl(page)),
+      xslURL: `${base}sitemap.xsl`,
+      // OpsecAtlas does not publish news/video/i18n sitemap extensions; keep XML lean.
+      namespaces: { news: false, xhtml: false, image: false, video: false },
+    }),
     AstroPWA({
       registerType: 'autoUpdate',
       // We wire the manifest link + SW registration manually in Base.astro (the

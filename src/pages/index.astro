@@ -5,8 +5,17 @@ const base = import.meta.env.BASE_URL;
 const states = activeStates();
 const domains = techniquesByDomain();
 const totalTechniques = domains.reduce((n, d) => n + d.techniques.length, 0);
+const description = 'OpsecAtlas is an offline penetration-testing and offensive-security atlas that routes operators from current access to the next move with copy-ready commands, playbooks, and references.';
+const websiteSchema = {
+  '@context': 'https://schema.org',
+  '@type': 'WebSite',
+  name: 'OpsecAtlas',
+  alternateName: 'Opsec Atlas',
+  url: new URL(base, Astro.site).href,
+  description,
+};
 ---
-<Base title="OpsecAtlas · the next-move engine">
+<Base title="OpsecAtlas · the next-move engine" description={description} structuredData={websiteSchema}>
   <div class="doors-head">
     <span class="label kicker">what do you have?</span>
     <h1>Start where you are.</h1>

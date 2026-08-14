@@ -6,7 +6,7 @@ import { COMMAND_LIBRARY } from '../../data/commands.ts';
 const base = import.meta.env.BASE_URL;
 const total = COMMAND_LIBRARY.reduce((n, p) => n + p.groups.reduce((m, g) => m + g.commands.length, 0), 0);
 ---
-<Base title="Command Library · OpsecAtlas" here="Command Library">
+<Base title="Command Library · OpsecAtlas" here="Command Library" description="Penetration-testing command library for recon, Linux, Windows, and Active Directory, grouped by intent with engagement variables that fill your target automatically.">
   <div class="tech-head">
     <span class="label kicker">library</span>
     <h1>Command Library</h1>

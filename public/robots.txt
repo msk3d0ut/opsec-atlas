@@ -1,3 +1,5 @@
 # OpsecAtlas — https://opsecatlas.com
 User-agent: *
 Allow: /
+
+Sitemap: https://opsecatlas.com/sitemap-index.xml

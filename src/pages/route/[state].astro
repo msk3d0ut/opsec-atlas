@@ -19,8 +19,9 @@ for (const step of route.steps) {
   const t = techBySlug.get(step.techniqueSlug);
   if (t) techniques[step.techniqueSlug] = t;
 }
+const description = `From ${route.startLabel}, follow ${route.steps.length} ordered high-yield penetration-testing moves with exact commands, expected outcomes, and next steps in OpsecAtlas.`;
 ---
-<Base title={`You have ${route.startLabel} · OpsecAtlas`} here={route.startLabel}>
+<Base title={`You have ${route.startLabel} · OpsecAtlas`} here={route.startLabel} description={description}>
   <div class="route-head">
     <span class="label kicker">next-move engine</span>
     <h1>You have <span class="state">{route.startLabel}</span></h1>

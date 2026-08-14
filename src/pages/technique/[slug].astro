@@ -19,13 +19,20 @@ const hasConnections = conns.leadsTo.length + conns.reachedFrom.length + conns.t
 const base = import.meta.env.BASE_URL;
 const cmdCount = tech.blocks.reduce(
   (n, b) => n + (b.kind === 'commands' ? b.items.filter((it) => 't' in it).length : 0), 0);
+const topTools = (tech.tools ?? []).slice(0, 3);
+const description = [
+  `${cleanTitle(tech.title)} · ${domain.label} penetration-testing reference.`,
+  cmdCount > 0 ? `${plural(cmdCount, 'copy-ready command')}.` : '',
+  topTools.length > 0 ? `Tools: ${topTools.join(', ')}.` : '',
+  'See prerequisites, outputs, and next moves in OpsecAtlas.',
+].filter(Boolean).join(' ');
 // A domain entry page (depth 1) is a doc's front door: it holds only a briefing,
 // so give it a real map into the domain instead of a kill-chain pin and dead space.
 const isEntry = tech.depth === 1;
 const siblings = isEntry ? siblingsInDoc(tech.docId, tech.slug) : [];
 const related = isEntry ? entryRelated(tech.docId) : [];
 ---
-<Base title={`${cleanTitle(tech.title)} · OpsecAtlas`} here={domain.label}>
+<Base title={`${cleanTitle(tech.title)} · OpsecAtlas`} here={domain.label} description={description}>
   <div class="tech-head">
     <a class="label kicker" href={`${base}#${domain.id}`}>{domain.label}</a>
     <h1>{cleanTitle(tech.title)}</h1>
